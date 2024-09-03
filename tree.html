@@ -1,0 +1,274 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+
+    <style>
+        .tree summary{
+            outline: 0;
+            padding-left: 30px;
+            list-style: none;
+            background: repeating-linear-gradient( 90deg, #999 0 1px,transparent 0px 2px) 0px 50%/20px 1px no-repeat;
+            /* background: linear-gradient(#999,#999) 0px 50%/20px 1px no-repeat; */
+        }
+        .tree details:last-child{
+            background-size: 1px 23px;
+        }
+        .tree>details:not(:last-child)>details:last-child{
+            background-size: 1px 100%;
+        }
+        .tree details{
+            padding-left: 40px;
+            background: repeating-linear-gradient( #999 0 1px,transparent 0px 2px) 40px 0px/1px 100% no-repeat;
+            /* background: linear-gradient(#999, #999) 40px 0px/1px 100% no-repeat; */
+        }
+        .tree>details{
+            background: none;
+            padding-left: 0;
+        }
+        .tree>details>summary{
+            background: none
+        }
+        .tree summary{
+            display: flex;
+            align-items: center;
+            height: 46px;
+            font-size: 15px;
+            line-height: 22px;
+            color: rgba(0, 0, 0, 0.85);
+            cursor: default;
+        }
+        .tree summary::after{
+            content: '';
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            height: 38px;
+            background: #EEF2FF;
+            border-radius: 8px;
+            z-index: -1;
+            opacity: 0;
+            transition: .2s;
+        }
+        .tree summary:hover::after{
+            opacity: 1;
+        }
+        .tree summary:not(:only-child)::before{
+            content: '';
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            margin-right: 8px;
+            border: 1px solid #999;
+            background: linear-gradient(#999, #999) 50%/1px 10px no-repeat,linear-gradient(#999, #999)  50%/10px 1px no-repeat;
+        }
+        .tree details[open]>summary::before{
+            background: linear-gradient(#999, #999) 50%/10px 1px no-repeat;
+        }
+    </style>
+
+    <body>
+        <div class="tree" id="tree">    
+        </div>
+    </body>
+
+    <script type="text/javascript">
+        
+        const tree_data = [
+            {
+                "id": 69,
+                "name": "Group - Level 1 - 4",
+                "parentId": 0,
+                "fileCount": 55,
+                "is_display": "",
+                "is_open": "",
+                "children": [
+                    {
+                        "id": 70,
+                        "name": "Group - Level 2 - 41 - Demo",
+                        "parentId": 69,
+                        "fileCount": 12,
+                        "is_display": "",
+                        "is_open": "",
+                        "children": [
+                            {
+                                "id": 4,
+                                "name": "Group - Level 3 - 41",
+                                "parentId": 70,
+                                "fileCount": 3,
+                                "is_display": "",
+                                "is_open": "",
+                                "children": [
+                                    {
+                                        "id": 51,
+                                        "name": "Group - Level 4 - 41",
+                                        "parentId": 4,
+                                        "fileCount": 1,
+                                        "is_display": "",
+                                        "is_open": "",
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": 91,
+                        "name": "Group - Level 2 - 42",
+                        "parentId": 69,
+                        "fileCount": 10,
+                        "is_display": "",
+                        "is_open": "",
+                    },
+                    {
+                        "id": 102,
+                        "name": "Group - Level 2 - 43 - Demo",
+                        "parentId": 69,
+                        "fileCount": 10,
+                        "is_display": "",
+                        "is_open": "",
+                    },
+                    {
+                        "id": 113,
+                        "name": "Group - Level 2 - 44",
+                        "parentId": 69,
+                        "fileCount": 10,
+                        "is_display": "",
+                        "is_open": "",
+                    },
+                    {
+                        "id": 121,
+                        "name": "Group - Level 2 - 45",
+                        "parentId": 69,
+                        "fileCount": 10,
+                        "is_display": "",
+                        "is_open": "",
+                    },
+                    {
+                        "id": 136,
+                        "name": "Group - Level 2 - 46",
+                        "parentId": 69,
+                        "fileCount": 0,
+                        "is_display": "",
+                        "is_open": "",
+                    },
+                    {
+                        "id": 140,
+                        "name": "Group - Level 2 - 47 - Demo",
+                        "parentId": 69,
+                        "fileCount": 3,
+                        "is_display": "",
+                        "is_open": "",
+                        "children": [
+                            {
+                                "id": 142,
+                                "name": "Group - Level 3 - 47",
+                                "parentId": 140,
+                                "fileCount": 1,
+                                "is_display": "",
+                                "is_open": "",
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+
+        function genTree(data) {
+            var html = ''
+            data.forEach(el => {
+                if (ancestors_be_displayed.indexOf(el.id)!== -1) {
+                    el.is_open = 'open';
+                    el.is_display = '';
+                } else if (offsprings_be_displayed.indexOf(el.id) !== -1) {
+                    el.is_open = '';
+                    el.is_display = '';
+                } else if (keyword.trim().length === 0) {
+                    el.is_open = '';
+                    el.is_display = '' 
+                } else {
+                    el.is_open = '';
+                    el.is_display = 'none';
+                }
+
+                if (el.parentId === 0) {
+                    el.is_open = 'open';
+                    el.is_display = ''
+                }
+
+                html+=`<details ${el.is_open} style="display: ${el.is_display}">
+                        <summary class="tree-item">
+                            ${el.id} - ${el.name}
+                        </summary>`
+                if (el.children && el.children.length) {
+                    html += genTree(el.children)
+                }
+                html+= `</details>`
+            })
+            return html;
+        }
+
+        function flatTree(data) {
+            data.forEach(el => {
+                flat_data.push(el);
+                if (el.children && el.children.length) {
+                    flatTree(el.children);
+                }
+            })
+        }
+
+        function filterData(data, keyword) {
+            data.forEach(el => {
+                if ((el.name).includes(keyword)) {
+                    items_contain_keyword.push(el.id);
+                }
+                if (el.children && el.children.length) {
+                    filterData(el.children, keyword);
+                }
+            })
+        }
+
+        function getAncestors(data, id) {
+            data.forEach(el => {
+                if (el.id === id) {
+                    if (el.parentId !== 0) {
+                        ancestors_be_displayed.push(el.parentId);
+                        getAncestors(data, el.parentId);
+                    }
+                }
+            })
+        }
+
+        function getOffsprings(data, id) {
+            data.forEach(el => {
+                if (el.parentId === id) {
+                    offsprings_be_displayed.push(el.id);
+                    if (el.children && el.children.length) {
+                        getOffsprings(data, el.id)
+                    }
+                }
+            })
+        }        
+
+        let keyword = 'Demo';
+        let flat_data = [];
+        let items_contain_keyword = [];
+        let ancestors_be_displayed = [];
+        let offsprings_be_displayed = [];
+        
+        flatTree(tree_data);
+        
+        if (keyword.trim() !== '') {
+            filterData(tree_data, keyword.trim());
+        }
+
+        items_contain_keyword.forEach(id => {
+            ancestors_be_displayed.push(id);
+            getAncestors(flat_data, id);
+            getOffsprings(flat_data, id);
+        })
+        ancestors_be_displayed = Array.from(new Set(ancestors_be_displayed));
+
+        tree.innerHTML = genTree(tree_data);
+ 
+    </script>
+</html>
